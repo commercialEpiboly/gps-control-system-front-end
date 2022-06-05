@@ -1,0 +1,28 @@
+.warn-page {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.warn-page_list {
+  position: absolute;
+  z-index: 100;
+  bottom: 10px;
+  width: calc(100% - 20px);
+  left: 10px;
+}
+.warn-page_info {
+  position: absolute;
+  z-index: 100;
+  top: 10px;
+  left: 10px;
+}
+
+.warn-page_info h4 {
+  margin-bottom: 0;
+}
+
+.warn-page_info  .ant-card-body {
+  padding: 10px;
+}
+

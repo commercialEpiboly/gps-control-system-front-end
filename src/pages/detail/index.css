@@ -1,0 +1,9 @@
+.detail-page {
+  padding: 20px;
+}
+.detail-page .ant-descriptions-header {
+  margin-bottom: 10px;
+}
+.detail-page .ant-descriptions-row > th, .ant-descriptions-row > td {
+  padding-bottom: 5px;
+}

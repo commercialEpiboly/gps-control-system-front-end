@@ -1,0 +1,31 @@
+.menu-box {
+
+}
+
+.logo {
+  color: #e0e0e0;
+    font-size: 20px;
+}
+
+.layout-page {
+  height: 100%;
+}
+
+.layout-page_header {
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.exit {
+  color: #fff;
+}
+
+.layout-page_body{
+  height: calc(100% - 70px);
+  overflow: hidden;
+}
+.layout-page_header {
+  border-bottom: 2px solid;
+}
