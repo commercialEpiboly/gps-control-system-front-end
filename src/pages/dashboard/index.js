@@ -33,10 +33,11 @@ export default () => {
         let lineArr = json?.data?.map(({ latitude, longitude, deviceId }) => {
           const long = Number(insert(longitude, 3, '.'))
           const lat = Number(insert(latitude, 2, '.'))
-          const COORXY = ChinaCoordTrans.wgs84togcj02(long, lat);
+          let COORXY = ChinaCoordTrans.wgs84togcj02(long, lat);
+          COORXY =  ChinaCoordTrans.gcj02tobd09(COORXY.X, COORXY.Y)
           return {
-            deviceId,
-            coordinates: [`${COORXY.X}`, `${COORXY.Y}`]
+            deviceId, 
+            coordinates: [COORXY.X, COORXY.Y]
           }
         })
         setData(lineArr)
@@ -48,59 +49,42 @@ export default () => {
 
   useEffect(()=> {
     if(!!data.length) {
-      AMapLoader.load({
-        key: "0f1c640e2f5e4cdca872febc63c7381c",                     // 申请好的Web端开发者Key，首次调用 load 时必填
-        version: "2.0",              // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-        plugins: ['AMap.MoveAnimation'],               // 需要使用的的插件列表，如比例尺'AMap.Scale'等
-      }).then((AMap) => {
-        const map = new AMap.Map("dashboardContainer", { //设置地图容器id
-          // mapStyle: 'amap://styles/blue',
-          viewMode: "2D",         //是否为3D地图模式
-          zoom: 14,                //初始化地图级别
-          center: [103.85784595108075, 30.04325952077016] //初始化地图中心点位置
-        });
-        
-        var loca = new window.Loca.Container({
-          map,
-          opacity: 1,
-        });
-    
-        let style = {
-          radius: 8.5,
-          unit: 'px',
-          color: '#1890ff',
-          borderWidth: 0,
-          blurWidth: 3.5,
-        }
-    
-        data.forEach(({coordinates}) => {
-          geoJson.features.push(
-            {
-              "type": "Feature",
-              "properties": {
-                "consume": null
-              },
-              "geometry": {
-                "type": "Point",
-                "coordinates": coordinates
-              }
-            }
-          )
-        })
-        const geo = new window.Loca.GeoJSONSource({
-          data: geoJson
-        })
+      const map = new window.BMapGL.Map("dashboardContainer");
+      const point = new window.BMapGL.Point(103.85784595108075, 30.04325952077016);
+      map.centerAndZoom(point, 14); 
+      const scaleCtrl = new window.BMapGL.ScaleControl();  // 添加比例尺控件
+      map.addControl(scaleCtrl);
+      const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
+      map.addControl(zoomCtrl);
 
-        var pl = window.pl = new window.Loca.PointLayer({
-          zIndex: 99999,
-          blend: 'normal',
-        });
-
-       
-        pl.setSource(geo);
-        pl.setStyle(style);
-        loca.add(pl);
+      // 创建小车图标
+      // const myIcon = new window.BMapGL.Icon("http://124.221.189.38:8888/img/car.png", new window.BMapGL.Size(52, 26));
+      data.forEach(({deviceId,coordinates})=> {
+      // 创建定位点
+      const markerPoint = new window.BMapGL.Point(coordinates[0],coordinates[1]);
+      // 创建文本标注对象
+      var labelopts = {
+        position: markerPoint, // 指定文本标注所在的地理位置
+        offset: new window.BMapGL.Size(0, 0) // 设置文本偏移量
+      };
+      const label = new window.BMapGL.Label(`id:${deviceId}`, labelopts);
+      label.setStyle({
+        color: "#fff",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        borderRadius: "10px",
+        padding: "0 8px",
+        fontSize: "8px",
+        lineHeight: "20px",
+        border :"0",
+          transform:'translateX(-50%)'
+      });
+      // 创建Marker标注，使用小车图标
+      const marker = new window.BMapGL.Marker(markerPoint);
+      // 将标注添加到地图
+      map.addOverlay(marker);
+      map.addOverlay(label);
       })
+
     }
   },[data])
 

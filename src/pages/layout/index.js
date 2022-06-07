@@ -38,18 +38,11 @@ export default () => {
     <div className='layout-page'>
       <Header className='layout-page_header'>
         <div className="logo" >聚森凯跃科技定位管理系统</div>
-        <div className='exit' onClick={loginOut}>退出</div>
-      </Header>
-      <Layout className='layout-page_body'>
-        <Sider width={200} className="site-layout-background" collapsed={collapsed}>
-          <Button type="primary" onClick={() => setCollapsed(!collapsed)} style={{ marginBottom: 16 }}>
-            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined)}
-          </Button>
-          <div className='menu-box'>
+        <div className='menu-box'>
             <Menu
               className='menu'
               defaultSelectedKeys={['1']}
-              mode="inline"
+              mode="horizontal"
               theme="dark"
               style={{ height: '100%', borderRight: 0 }}
             >
@@ -67,7 +60,9 @@ export default () => {
               </Menu.Item>
             </Menu>
           </div>
-        </Sider>
+        <div className='exit' onClick={loginOut}>退出</div>
+      </Header>
+      <Layout className='layout-page_body'>
         <Layout style={{ padding: '0 24px 24px', overflow: 'scroll'}}>
           <Content
             className="site-layout-background"
