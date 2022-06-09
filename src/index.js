@@ -15,7 +15,7 @@ import {
 // test
 // window.urlApi = 'http://119.91.226.187:19009'
 // pro
-window.urlApi = 'http://124.221.189.38:19009'
+window.urlApi = 'https://www.jusenkaiyue.cn/api'
 
 const NotFound404 = () => {
   

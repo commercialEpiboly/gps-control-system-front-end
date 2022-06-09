@@ -86,7 +86,7 @@ class MapComponent extends Component {
             map: map,
             position: lineArr[0],
             icon: new AMap.Icon({            
-              image: "http://124.221.189.38:8888/img/car.png",
+              image: "https://www.jusenkaiyue.cn/img/car.png",
               size: new AMap.Size(30, 30),  //图标大小
               imageSize: new AMap.Size(30,30)
             }),

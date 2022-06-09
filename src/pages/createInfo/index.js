@@ -119,7 +119,8 @@ export default () => {
 
   return (
     <div className="create-page">
-      <Alert message="请使用sin号码作为设备识别码（创建后则不可改变）" type="success" />
+      <Alert message="(注意)请使用sin号码作为设备识别码（创建后则不可改变）" type="warning" />
+      <Alert message="(注意)定位设备通电后再创建" type="warning" />
       <Form
         name="basic"
         layout='vertical'

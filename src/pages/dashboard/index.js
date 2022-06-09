@@ -52,6 +52,7 @@ export default () => {
       const map = new window.BMapGL.Map("dashboardContainer");
       const point = new window.BMapGL.Point(103.85784595108075, 30.04325952077016);
       map.centerAndZoom(point, 14); 
+      map.enableScrollWheelZoom();
       const scaleCtrl = new window.BMapGL.ScaleControl();  // 添加比例尺控件
       map.addControl(scaleCtrl);
       const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
@@ -71,15 +72,18 @@ export default () => {
       label.setStyle({
         color: "#fff",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
-        borderRadius: "10px",
+        borderRadius: "4px",
         padding: "0 8px",
         fontSize: "8px",
         lineHeight: "20px",
         border :"0",
           transform:'translateX(-50%)'
       });
-      // 创建Marker标注，使用小车图标
-      const marker = new window.BMapGL.Marker(markerPoint);
+    // 创建小车图标
+      const myIcon = new window.BMapGL.Icon("https://www.jusenkaiyue.cn/img/car.png", new window.BMapGL.Size(30, 30));
+      const marker = new window.BMapGL.Marker(markerPoint,{
+        icon: myIcon
+      });
       // 将标注添加到地图
       map.addOverlay(marker);
       map.addOverlay(label);
