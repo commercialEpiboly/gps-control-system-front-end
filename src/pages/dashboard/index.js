@@ -49,6 +49,7 @@ export default () => {
 
   useEffect(()=> {
     if(!!data.length) {
+      window.scrollTo(0,0)
       const map = new window.BMapGL.Map("dashboardContainer");
       const point = new window.BMapGL.Point(103.85784595108075, 30.04325952077016);
       map.centerAndZoom(point, 14); 
