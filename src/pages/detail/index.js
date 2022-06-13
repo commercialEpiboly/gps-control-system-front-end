@@ -60,7 +60,7 @@ export default () => {
 
   return (
     <div className="detail-page">
-      <Descriptions title="实时监控">
+      <Descriptions title="轨迹回放">
         {
           list.map(({label,name}, index)=> {
             return <Descriptions.Item key={index} label={label}> {defaultData[name]} </Descriptions.Item>

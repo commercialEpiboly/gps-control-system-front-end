@@ -1,14 +1,18 @@
-
 .mapContainer {
   position: relative;
 }
 
-#container{
+.lineCarInfo div {
+  text-align: left;
+}
+
+#container {
   padding: 0px;
   margin: 0px;
   width: 100%;
 }
-.mapContainer .input-card{
+
+.mapContainer .input-card {
   top: 0;
   position: absolute;
   z-index: 9999;
@@ -37,6 +41,7 @@
   line-height: 14px;
   border-radius: 4px;
 }
+
 .amap-marker-label p {
   margin-bottom: 2px;
 }

@@ -34,7 +34,10 @@ class MapComponent extends Component {
   }
   // 2.dom渲染成功后进行map对象的创建
   componentDidMount() {
-    const initMap = (lineArr) => {
+    const defaultData = JSON.parse(window.localStorage.getItem('data'))
+
+    const initMap = (lineArr, validData) => {
+      console.log(lineArr[0], validData[0])
       const point = new window.BMapGL.Point(lineArr[0][0], lineArr[0][1]);
       MapContainer.centerAndZoom(point, 15);
       MapContainer.enableScrollWheelZoom();
@@ -52,16 +55,26 @@ class MapComponent extends Component {
       MapContainer.addOverlay(MapContainerPath);
 
       this.lushu = new window.BMapGLLib.LuShu(MapContainer, MapContainerPath.getPath(), {
+        defaultContent: " ",
         geodesic: false,
         autoCenter: true,
+        landmarkPois: validData.map((v) => {
+          const html = `
+            <div class='lineCarInfo'>
+              <div>品牌：${defaultData.brand} | 车牌号：${defaultData.numberPlate} | 颜色：${defaultData.color}</div>
+              <div>速度：${v.speed / 10}(Km/h)</div>
+              <div>时间：${v.createDateTime}</div>
+            </div>`
+          return { lng: v.longitude, lat: v.latitude, html, }
+        }),
         icon: new window.BMapGL.Icon('https://www.jusenkaiyue.cn/img/car.png', new window.BMapGL.Size(30, 30), { anchor: new window.BMapGL.Size(15, 30) }),
-        speed: 300,
+        speed: "10",
         enableRotation: false
       });
       this.lushu.showInfoWindow()
     }
 
-    const defaultData = JSON.parse(window.localStorage.getItem('data'))
+    
 
     let deviceId = defaultData?.deviceId?.length === 11 ? defaultData?.deviceId : defaultData?.deviceId?.substring(2)
     fetch(`${window.urlApi}/device/getDeviceGpsList?deviceId=${deviceId}`, {
@@ -88,16 +101,20 @@ class MapComponent extends Component {
 
       lineArr = lineArr.map((v) => {
         const { id, latitude, longitude } = v
-        validData.unshift(v)
         const long = Number(insert(longitude, 3, '.'))
         const lat = Number(insert(latitude, 2, '.'))
         let COORXY = ChinaCoordTrans.wgs84togcj02(long, lat);
-
         COORXY = ChinaCoordTrans.gcj02tobd09(COORXY.X, COORXY.Y)
+        validData.unshift({
+          ...v,
+          longitude: COORXY.X,
+          latitude: COORXY.Y
+        })
         return [COORXY.X, COORXY.Y]
       })
-      console.log(lineArr[0])
-      initMap(lineArr, validData)
+
+
+      initMap(lineArr, validData.reverse())
     })
   }
 
@@ -120,7 +137,7 @@ class MapComponent extends Component {
                     this.setState({
                       startAnimation: true
                     })
-                    this.lushu.start((info)=> {
+                    this.lushu.start((info) => {
                       console.log()
                     })
                   }}>开始播放</Radio.Button>
