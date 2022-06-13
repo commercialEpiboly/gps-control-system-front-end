@@ -2,7 +2,10 @@ import './index.css';
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import AMapLoader from '@amap/amap-jsapi-loader';
-import { Card } from 'antd'
+import { Card, message } from 'antd'
+import {
+  useNavigate
+} from "react-router-dom";
 import * as ChinaCoordTrans from 'chinacoordtrans'
 import _ from 'lodash'
 function insert(str, index, string) {
@@ -13,6 +16,7 @@ function insert(str, index, string) {
 };
 
 export default () => {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const geoJson = {
     "type": "FeatureCollection",
@@ -24,7 +28,11 @@ export default () => {
   }, []);
 
   const asyncFetch = () => {
-    fetch(`${window.urlApi}/device/getAllDeviceGpsOneData`)
+    fetch(`${window.urlApi}/device/getAllDeviceGpsOneData`,{
+      headers: {
+        'Authorization': window.sessionStorage.getItem('token')
+      }
+    })
       .then((response) => response.json())
       .then((json) => {
         if (!json?.data) {
@@ -43,7 +51,10 @@ export default () => {
         setData(lineArr)
       })
       .catch((error) => {
-        console.log('fetch data failed', error);
+        if(!window.sessionStorage.getItem('token')) {
+          message.error('没有登陆或登录超时');
+          navigate('/login')
+        }
       });
   };
 

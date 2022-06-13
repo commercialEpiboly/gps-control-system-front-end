@@ -12,10 +12,12 @@ export default () => {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': window.sessionStorage.getItem('token')
       },
     })
       .then(response => {
+        console.log(response)
         message.success('创建成功！');
         navigate('/list')
       })

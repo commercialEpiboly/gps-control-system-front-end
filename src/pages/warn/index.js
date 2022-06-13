@@ -26,7 +26,11 @@ export default () => {
   }, []);
 
   const asyncFetch = () => {
-    fetch(`${window.urlApi}/device/getAllDeviceGpsOneData`)
+    fetch(`${window.urlApi}/device/getAllDeviceGpsOneData`,{
+      headers: {
+        'Authorization': window.sessionStorage.getItem('token')
+      }
+    })
       .then((response) => response.json())
       .then((json) => {
         if (!json?.data) {
@@ -88,7 +92,8 @@ export default () => {
       mode: 'cors',
       body: JSON.stringify(qeury),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': window.sessionStorage.getItem('token')
       },
     }).then((response) => response.json()).then(({ qData }) => {
       setQdata(qData)

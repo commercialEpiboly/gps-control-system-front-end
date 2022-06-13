@@ -3,23 +3,54 @@ import { Form, Input, Button, message } from 'antd';
 import {
   useNavigate
 } from "react-router-dom";
-const PASSWORD = '123456'
-const USERNAME = 'admin'
 
 export default () => {
   const navigate = useNavigate();
   const onFinish = (values) => {
     console.log('Success:', values);
     const { username, password } = values
-    if (password === PASSWORD && USERNAME === username) {
-      message.success('登录成功');
-      window.localStorage.setItem('user', USERNAME)
-      navigate('/dashboard')
-      window.location.reload();
-    } else {
-      message.error('用户名和密码错误');
-    }
+    fetch(`${window.urlApi}/auth/login`, {
+      method: 'POST',
+      body: JSON.stringify({
+        username,
+        password
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': window.sessionStorage.getItem('token')
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => {
+        if (json) {
+          const { data } = json
+          window.sessionStorage.setItem('token', data?.token)
+          getUsersInfo(username)
+        } else {
+          message.error('用户名和密码错误');
+        }
+      }).catch(() => {
+        message.error('用户名和密码错误');
+      })
   };
+  // manager
+  const getUsersInfo = (username) => {
+    fetch(`${window.urlApi}/user/getUsersInfo?username=${username}&pageNumber=1&pageSize=10`, {
+      method: 'GET',
+      headers: {
+        'Authorization': window.sessionStorage.getItem('token')
+      },
+    }).then((response) => response.json()).then((json) => {
+      if (json) {
+        const [usersInfo] = json?.data?.data
+        window.localStorage.setItem('user', JSON.stringify(usersInfo))
+        navigate('/dashboard')
+        window.location.reload();
+      }
+    }).catch(() => {
+      message.error('用户名和密码错误或没有这个用户');
+    })
+  }
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);

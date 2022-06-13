@@ -60,14 +60,15 @@ export default () => {
 
   return (
     <div className="detail-page">
-      <Descriptions title="轨迹信息">
+      <Descriptions title="实时监控">
         {
           list.map(({label,name}, index)=> {
             return <Descriptions.Item key={index} label={label}> {defaultData[name]} </Descriptions.Item>
           })
         }
       </Descriptions>
-      <MapContainer ref={mapContainer} center={[116.478935,39.997761]} />
+      
+      <MapContainer ref={mapContainer} />
     </div>
   );
 }

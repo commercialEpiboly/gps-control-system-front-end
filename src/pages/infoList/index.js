@@ -35,7 +35,8 @@ export default () => {
       mode: 'cors',
       body: JSON.stringify(qeury),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': window.sessionStorage.getItem('token')
       },
     }).then((response)=> response.json()).then(({data})=> {
       setData(data)
