@@ -1,9 +1,12 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './index.css';
 import {
   useNavigate,
 } from "react-router-dom";
-import { Table, Form, Input, Button, Radio ,InputNumber} from 'antd';
+import { Table, Form, Input, Button, DatePicker, InputNumber } from 'antd';
+import moment from 'moment'
+
+const { RangePicker } = DatePicker;
 // 创建时间 *
 // 使用年限 
 // 身份证 搜索
@@ -18,6 +21,7 @@ import { Table, Form, Input, Button, Radio ,InputNumber} from 'antd';
 // 备注 *
 export default () => {
   const navigate = useNavigate();
+  const { area } = JSON.parse(localStorage.getItem('user'))
   const [qeury, setQeury] = useState({
     engineNumber: "",
     frameNumber: "",
@@ -25,11 +29,13 @@ export default () => {
     numberPlate: "",
     pageNumber: 1,
     pageSize: 8,
-    phoneNumber: ""
+    phoneNumber: "",
+    area
   })
   const [data, setData] = useState({})
 
-  const qeuryHandle = () =>{
+
+  const qeuryHandle = () => {
     fetch(`${window.urlApi}/device/getDeviceInfo`, {
       method: 'POST',
       mode: 'cors',
@@ -38,33 +44,44 @@ export default () => {
         'Content-Type': 'application/json',
         'Authorization': window.sessionStorage.getItem('token')
       },
-    }).then((response)=> response.json()).then(({data})=> {
+    }).then((response) => response?.json()).then(({ data }) => {
       setData(data)
+    }).catch(() => {
+      setData({})
     })
   }
 
   const onFinish = (filterData) => {
-    Object.keys(filterData).map((key)=> {
-      filterData[key] = filterData[key] ? filterData[key] : '' 
+    let startTime = '', endTime = '';
+    Object.keys(filterData).map((key) => {
+      if (key === 'dateRange' && filterData[key]) {
+        const [momentStart, momentEnd] = filterData[key];
+        startTime = moment(momentStart).format('yyyy-MM-DD') + ' 00:00:00'
+        endTime = moment(momentEnd).format('yyyy-MM-DD') + ' 23:59:59'
+        delete filterData.dateRange
+      }
+      filterData[key] = filterData[key] ? filterData[key] : ''
     })
 
     setQeury({
       ...qeury,
-      ...filterData
+      ...filterData,
+      startTime,
+      endTime
     })
   }
 
-  useEffect(()=> {
-    qeuryHandle() 
-  },[])
-
-  useEffect(()=> {
+  useEffect(() => {
     qeuryHandle()
-  },[qeury])
+  }, [])
+
+  useEffect(() => {
+    qeuryHandle()
+  }, [qeury])
 
 
   const jumpPage = (url, data) => {
-    if(data) {
+    if (data) {
       window.localStorage.setItem('data', '')
       window.localStorage.setItem('data', JSON.stringify(data))
     }
@@ -76,6 +93,13 @@ export default () => {
       title: '车牌号',
       dataIndex: 'numberPlate',
       key: 'numberPlate',
+      width: 90,
+      fixed: 'left',
+    },
+    {
+      title: '姓名',
+      dataIndex: 'name',
+      key: 'name',
       width: 90,
       fixed: 'left',
     },
@@ -147,8 +171,8 @@ export default () => {
       fixed: 'right',
       render: (text, item) => {
         return <>
-          <Button type="link" onClick={() => jumpPage('/editInfo',item)}> 编辑 </Button>
-          <Button type="link" onClick={() => jumpPage('/detailInfo',item)}> 轨迹 </Button>
+          <Button type="link" onClick={() => jumpPage('/editInfo', item)}> 编辑 </Button>
+          <Button type="link" onClick={() => jumpPage('/detailInfo', item)}> 轨迹 </Button>
         </>
       }
     },
@@ -165,34 +189,44 @@ export default () => {
         className='info-list_filter'
         onFinish={onFinish}
       >
+        <Form.Item label="姓名" name="name">
+          <Input placeholder="姓名" allowClear />
+        </Form.Item>
         <Form.Item label="身份证" name="idCard">
-          <Input placeholder="身份证" allowClear/>
+          <Input placeholder="身份证" allowClear />
         </Form.Item>
         <Form.Item label="手机号" name="phoneNumber">
-          <InputNumber placeholder="手机号" allowClear/>
+          <InputNumber placeholder="手机号" allowClear />
         </Form.Item>
         <Form.Item label="车架号" name="frameNumber">
-          <Input placeholder="车架号" allowClear/>
+          <Input placeholder="车架号" allowClear />
         </Form.Item>
         <Form.Item label="发动机号" name="engineNumber">
-          <Input placeholder="发动机号" allowClear/>
+          <Input placeholder="发动机号" allowClear />
         </Form.Item>
         <Form.Item label="车牌号" name="numberPlate">
-          <Input placeholder="车牌号" allowClear/>
+          <Input placeholder="车牌号" allowClear />
+        </Form.Item>
+        <Form.Item label="车牌号" name="numberPlate">
+          <Input placeholder="车牌号" allowClear />
+        </Form.Item>
+        <Form.Item label="日期范围" name="dateRange">
+          <RangePicker allowClear />
         </Form.Item>
         <Form.Item>
           <Button htmlType="submit" type="primary">搜索</Button>
         </Form.Item>
       </Form>
-      <Table scroll={{ x: 1500, y: 400 }} dataSource={data?.data} columns={columns} pagination={
+      <Table scroll={{ x: 1500 }} dataSource={data?.data} columns={columns} pagination={
         {
+          showTotal: total => `总数 ${total} 条`,
           current: data?.number,
           total: data?.totalElements,
-          onChange: (NextPage)=> {
-            setQeury({...qeury,pageNumber:NextPage})
+          onChange: (NextPage) => {
+            setQeury({ ...qeury, pageNumber: NextPage })
           }
         }
-      }/>
+      } />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import './index.css';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import {
   useNavigate
@@ -6,8 +7,9 @@ import {
 
 export default () => {
   const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(false)
   const onFinish = (values) => {
-    console.log('Success:', values);
+    setIsLogin(true)
     const { username, password } = values
     fetch(`${window.urlApi}/auth/login`, {
       method: 'POST',
@@ -31,8 +33,16 @@ export default () => {
         }
       }).catch(() => {
         message.error('用户名和密码错误');
-      })
+      }).finally(() => setIsLogin(false))
   };
+
+  useEffect(() => {
+    document.getElementById("view").setAttribute('content', 'user-scalable=yes, width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=2');
+    return () => {
+      document.getElementById("view").setAttribute('content', 'initial-scale=0, minimum-scale=0,maximum-scale=0,user-scalable=no');
+    }
+  }, [])
+
   // manager
   const getUsersInfo = (username) => {
     fetch(`${window.urlApi}/user/getUsersInfo?username=${username}&pageNumber=1&pageSize=10`, {
@@ -44,7 +54,7 @@ export default () => {
       if (json) {
         const [usersInfo] = json?.data?.data
         window.localStorage.setItem('user', JSON.stringify(usersInfo))
-        navigate('/dashboard')
+        navigate('/')
         window.location.reload();
       }
     }).catch(() => {
@@ -52,21 +62,14 @@ export default () => {
     })
   }
 
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
-
   return (
     <div className='login-page'>
       <div className="form-box">
         <h4>聚森凯跃技定位管理系统</h4>
         <Form
           name="basic"
-          // labelCol={{ span: 8 }}
-          // wrapperCol={{ span: 16 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item
@@ -84,7 +87,7 @@ export default () => {
           </Form.Item>
 
           <Form.Item >
-            <Button className='btn' type="primary" htmlType="submit">
+            <Button loading={isLogin} className='btn' type="primary" htmlType="submit">
               登陆
             </Button>
           </Form.Item>

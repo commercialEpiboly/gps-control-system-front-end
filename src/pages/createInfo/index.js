@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './index.css';
-import { Form, Input, Button, message, Alert ,InputNumber} from 'antd';
+import { Form, Input, Button, message, Alert, InputNumber } from 'antd';
 import {
   useNavigate,
 } from "react-router-dom";
@@ -23,6 +23,14 @@ export default () => {
       })
   }
 
+  useEffect(() => {
+    document.getElementById("view").setAttribute('content', 'user-scalable=yes, width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=2');
+    return () => {
+      document.getElementById("view").setAttribute('content', 'initial-scale=0, minimum-scale=0,maximum-scale=0,user-scalable=no');
+    }
+  }, [])
+
+
   const itemList = [
     {
       name: 'deviceId',
@@ -32,8 +40,15 @@ export default () => {
       required: true
     },
     {
+      name: 'name',
+      placeholder: '请输入姓名',
+      message: '请输入姓名',
+      label: '请输入姓名',
+      required: true,
+    },
+    {
       name: 'usePeriod',
-      placeholder:'请输入使用年限',
+      placeholder: '请输入使用年限',
       message: '请输入使用年限',
       label: '请输入使用年限（整数年）',
       required: true,
@@ -47,7 +62,7 @@ export default () => {
       required: true,
       rules: [
         {
-          pattern: /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/, 
+          pattern: /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/,
           message: '请输入正确身份证'
         }
       ],
@@ -59,7 +74,7 @@ export default () => {
       label: '手机号',
       rules: [
         {
-          pattern: /^1[3|4|5|7|8][0-9]\d{8}$/, message: '请输入正确的手机号'
+          pattern: /^1[3|4|5|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号'
         }
       ],
       required: true
@@ -133,14 +148,14 @@ export default () => {
         autoComplete="off"
       >
         {
-          itemList.map(({ rules,message, required, name, placeholder, label, type}, index) => {
+          itemList.map(({ rules, message, required, name, placeholder, label, type }, index) => {
             return <Form.Item
               label={label}
               key={index}
               name={name}
-              rules={ rules ? [...rules,{ required, message }] :[{ required, message }]}
+              rules={rules ? [...rules, { required, message }] : [{ required, message }]}
             >
-              {type === 'number'? <InputNumber placeholder={placeholder}/> :<Input placeholder={placeholder} />}
+              {type === 'number' ? <InputNumber size="large" placeholder={placeholder} /> : <Input size="large" placeholder={placeholder} />}
             </Form.Item>
           })
         }

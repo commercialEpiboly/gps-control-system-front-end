@@ -12,7 +12,9 @@ import InfoList from '../infoList'
 import EditInfo from '../editInfo'
 import Dashboard from '../dashboard'
 import Warn from '../warn'
-
+import StaffList from '../staffList'
+import StaffDetail from '../staffDetail'
+import _ from 'lodash'
 import { Menu, Button, Layout, message } from 'antd';
 import {
   PieChartOutlined,
@@ -21,6 +23,7 @@ import {
   MenuFoldOutlined,
   ContainerOutlined,
   AlertOutlined,
+  UserAddOutlined
 } from '@ant-design/icons';
 
 const { SubMenu } = Menu;
@@ -31,6 +34,19 @@ export default () => {
   const [collapsed, setCollapsed] = useState(false)
   const navigate = useNavigate();
   const user = JSON.parse(window.localStorage.getItem('user'))
+
+  let addressableMenu;
+
+  // 不是超级管理员
+  if (user?.menu && user?.menu !== '*') {
+    addressableMenu = user?.menu?.split(',') || []
+  }
+
+  // 是超级管理员
+  if (user?.menu && user?.menu === '*') {
+    addressableMenu = '*'
+  }
+
   const isLogin = window.sessionStorage.getItem('token')
   // 判断是否登录
   if (!isLogin) {
@@ -47,6 +63,90 @@ export default () => {
     navigate('/login')
   }
 
+  const menus = {
+    '车辆总览': {
+      menuCom: <Menu.Item key="1" icon={<PieChartOutlined />}>
+        <Link to="/dashboard" >车辆总览</Link>
+      </Menu.Item>,
+      component: <Route path="/dashboard" element={<Dashboard />} />,
+      defaultRoute: <Dashboard />
+    },
+    '创建GPS关联': {
+      menuCom: <Menu.Item key="2" icon={<DesktopOutlined />}>
+        <Link to="/createInfo" >创建GPS关联</Link>
+      </Menu.Item>,
+      component: <Route path="/createInfo" element={<CreateInfo />} />,
+      defaultRoute: <CreateInfo />
+    },
+    'GPS列表': {
+      menuCom: <Menu.Item key="3" icon={<ContainerOutlined />}>
+        <Link to="/list" >GPS列表</Link>
+      </Menu.Item>,
+      component: <>
+        <Route path="/editInfo" element={<EditInfo />} />
+        <Route path="/detailInfo" element={<Detail />} />
+        <Route path="/list" element={<InfoList />} />
+      </>,
+      defaultRoute: <InfoList />
+    },
+    '风控管理': {
+      menuCom: <Menu.Item key="4" icon={<AlertOutlined />}>
+        <Link to="/warn" >风控管理</Link>
+      </Menu.Item>,
+      component: <Route path="/warn" element={<Warn />} />,
+      defaultRoute: <Warn />
+    },
+    '账号管理': {
+      menuCom: <Menu.Item key="" icon={<UserAddOutlined />}>
+        <Link to="/staffList" >账号管理</Link>
+      </Menu.Item>,
+      component: <>
+        <Route path="/staffDetail" element={<StaffDetail />} />
+        <Route path="/staffList" element={<StaffList />} />
+      </>,
+      defaultRoute: <StaffList />
+    }
+  }
+
+  const renderMenu = () => {
+    if (!addressableMenu) {
+      return <></>
+    }
+    if (addressableMenu === '*') {
+      return _.map(menus, ({ menuCom }) => menuCom)
+    }
+
+    if (_.isArray(addressableMenu)) {
+      return addressableMenu?.map((menuName) => menus[menuName].menuCom)
+    }
+  }
+
+  const renderRoute = () => {
+    if (!addressableMenu) {
+      return <></>
+    }
+    if (addressableMenu === '*') {
+      return _.map(menus, ({ component }) => component)
+    }
+
+    if (_.isArray(addressableMenu)) {
+      return addressableMenu?.map((menuName) => menus[menuName].component)
+    }
+  }
+
+  const getDefaultRoute = () => {
+
+    if (!addressableMenu) {
+      return <></>
+    }
+    if (addressableMenu === '*') {
+      return <Dashboard />
+    }
+    if (_.isArray(addressableMenu)) {
+      return addressableMenu?.map((menuName) => menus[menuName].defaultRoute)[0]
+    }
+  }
+
   return (
     <div className='layout-page'>
       <Header className='layout-page_header'>
@@ -59,18 +159,9 @@ export default () => {
             theme="dark"
             style={{ height: '100%', borderRight: 0 }}
           >
-            <Menu.Item key="1" icon={<PieChartOutlined />}>
-              <Link to="/dashboard" >车辆总览</Link>
-            </Menu.Item>
-            <Menu.Item key="2" icon={<DesktopOutlined />}>
-              <Link to="/createInfo" >创建GPS关联</Link>
-            </Menu.Item>
-            <Menu.Item key="3" icon={<ContainerOutlined />}>
-              <Link to="/list" >GPS列表</Link>
-            </Menu.Item>
-            <Menu.Item key="4" icon={<AlertOutlined />}>
-              <Link to="/warn" >风控管理</Link>
-            </Menu.Item>
+            {
+              renderMenu()
+            }
           </Menu>
         </div>
         {
@@ -91,13 +182,10 @@ export default () => {
             <Routes>
               {
                 isLogin && <>
-                  <Route path="/" element={<Dashboard />} />
-                  <Route path="/list" element={<InfoList />} />
-                  <Route path="/createInfo" element={<CreateInfo />} />
-                  <Route path="/editInfo" element={<EditInfo />} />
-                  <Route path="/detailInfo" element={<Detail />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/warn" element={<Warn />} />
+                  {
+                    renderRoute()
+                  }
+                  <Route path="/" element={getDefaultRoute()} />
                 </>
               }
 

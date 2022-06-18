@@ -9,7 +9,16 @@ export default () => {
   const [form] = Form.useForm();
   const defaultData = JSON.parse(window.localStorage.getItem('data'))
   const navigate = useNavigate()
+
+  useEffect(() => {
+    document.getElementById("view").setAttribute('content', 'user-scalable=yes, width=device-width, minimum-scale=1, initial-scale=1, maximum-scale=2');
+    return () => {
+      document.getElementById("view").setAttribute('content', 'initial-scale=0, minimum-scale=0,maximum-scale=0,user-scalable=no');
+    }
+  }, [])
+
   const onFinish = (data) => {
+    
     const newData = {
         ...defaultData,
       ...data
@@ -19,6 +28,7 @@ export default () => {
       method: 'POST',
       body: JSON.stringify(newData),
       headers: {
+        'Authorization': window.sessionStorage.getItem('token'),
         'Content-Type': 'application/json'
       },
     })
@@ -39,6 +49,13 @@ export default () => {
       label: '识别码',
       required: true,
       disabled: true,
+    },
+    {
+      name: 'name',
+      placeholder:'请输入姓名',
+      message: '请输入姓名',
+      label: '请输入姓名',
+      required: true,
     },
     {
       name: 'usePeriod',
@@ -69,7 +86,7 @@ export default () => {
       required: true,
       rules: [
         {
-          pattern: /^1[3|4|5|7|8][0-9]\d{8}$/, message: '请输入正确的手机号'
+          pattern: /^1[3|4|5|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号'
         }
       ]
     },
@@ -148,7 +165,7 @@ export default () => {
               key={index}
               rules={ rules ? [...rules,{ required, message }] :[{ required, message }]}
             >
-              {type === 'number'? <InputNumber placeholder={placeholder}/> :<Input placeholder={placeholder} disabled={disabled} />}
+              {type === 'number'? <InputNumber  size="large" placeholder={placeholder}/> :<Input  size="large" placeholder={placeholder} disabled={disabled} />}
             </Form.Item>
           })
         }

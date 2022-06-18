@@ -19,6 +19,9 @@
 
 .exit {
   color: #fff;
+  display: flex;
+  align-items: center;
+  line-height: 13px;
 }
 
 .layout-page_body{
