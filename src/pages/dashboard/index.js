@@ -1,13 +1,13 @@
 import './index.css';
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import AMapLoader from '@amap/amap-jsapi-loader';
-import { Card, message } from 'antd'
+import { Card, message, Form, Table, Input, Button } from 'antd'
 import {
   useNavigate
 } from "react-router-dom";
 import * as ChinaCoordTrans from 'chinacoordtrans'
 import _ from 'lodash'
+
 function insert(str, index, string) {
   if (index > 0)
     return str.substring(0, index) + string + str.substring(index, str.length);
@@ -15,19 +15,33 @@ function insert(str, index, string) {
     return string + str;
 };
 
+let map = null
+let lineArr = null
 export default () => {
+  const { area } = JSON.parse(localStorage.getItem('userInfo'))
+  const [qeury, setQeury] = useState({
+    engineNumber: "",
+    frameNumber: "",
+    idCard: "",
+    numberPlate: "",
+    pageNumber: 1,
+    pageSize: 8,
+    phoneNumber: "",
+    area
+  })
+
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const geoJson = {
-    "type": "FeatureCollection",
-    "features": []
-  }
+  const [dataTable, setDataTable] = useState({});
+
 
   useEffect(() => {
     asyncFetch();
   }, []);
 
-  const { area } = JSON.parse(localStorage.getItem('user'))
+  useEffect(() => {
+    qeuryHandle()
+  }, [qeury])
 
   const asyncFetch = () => {
     fetch(`${window.urlApi}/device/getAllDeviceGpsOneData?area=${area}`, {
@@ -40,7 +54,7 @@ export default () => {
         if (!json?.data) {
           return
         }
-        let lineArr = json?.data?.map(({ latitude, longitude, deviceId, brand, numberPlate, phoneNumber }) => {
+        lineArr = json?.data?.map(({ latitude, longitude, deviceId, brand, numberPlate, phoneNumber }) => {
           const long = Number(insert(longitude, 3, '.'))
           const lat = Number(insert(latitude, 2, '.'))
           let COORXY = ChinaCoordTrans.wgs84togcj02(long, lat);
@@ -63,10 +77,11 @@ export default () => {
       });
   };
   const geoc = new window.BMapGL.Geocoder();
+
   useEffect(() => {
     if (!!data.length) {
       window.scrollTo(0, 0)
-      const map = new window.BMapGL.Map("dashboardContainer");
+      map = new window.BMapGL.Map("dashboardContainer");
       const point = new window.BMapGL.Point(103.85784595108075, 30.04325952077016);
       map.centerAndZoom(point, 14);
       map.enableScrollWheelZoom();
@@ -76,7 +91,6 @@ export default () => {
       map.addControl(zoomCtrl);
 
       // 创建小车图标
-      // const myIcon = new window.BMapGL.Icon("http://124.221.189.38:8888/img/car.png", new window.BMapGL.Size(52, 26));
       data.forEach(({ deviceId, coordinates, brand, numberPlate, phoneNumber }) => {
         // 创建定位点
         const markerPoint = new window.BMapGL.Point(coordinates[0], coordinates[1]);
@@ -115,8 +129,8 @@ export default () => {
 
         const infoWindow = new window.BMapGL.InfoWindow('', opts);
         marker.addEventListener("click", function () {
-          if(!phoneNumber) return 
-          
+          if (!phoneNumber) return
+
           map.openInfoWindow(infoWindow, markerPoint); //开启信息窗口
           map.centerAndZoom(markerPoint, 19);
 
@@ -145,7 +159,6 @@ export default () => {
             })
 
             geoc.getLocation(markerPoint, (rs) => {
-
               infoWindow.setContent(`
               <p>颜色：${color} 发动机/电机号：${engineNumber} 车架号：${frameNumber}</p>
               <p>身份证：${idCard}</p>
@@ -168,9 +181,84 @@ export default () => {
     }
   }, [data])
 
+  const qeuryHandle = () => {
+    fetch(`${window.urlApi}/device/getDeviceInfo`, {
+      method: 'POST',
+      mode: 'cors',
+      body: JSON.stringify(qeury),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': window.sessionStorage.getItem('token')
+      },
+    }).then((response) => response?.json()).then(({ data }) => {
+      setDataTable(data)
+    }).catch(() => {
+      setDataTable({})
+    })
+  }
+
+
+  const onFinish = (filterData) => {
+    Object.keys(filterData).map((key) => {
+      filterData[key] = filterData[key] ? filterData[key] : ''
+    })
+
+    setQeury({
+      ...qeury,
+      ...filterData,
+    })
+  }
+  const jumpPoint = (number) => {
+    const car = _.find(lineArr, ({ numberPlate }) => {
+      return number === numberPlate
+    })
+    if (car) {
+      const markerPoint = new window.BMapGL.Point(car.coordinates[0], car.coordinates[1]);
+      map.centerAndZoom(markerPoint, 19);
+    }
+  }
+  const columns = [
+    {
+      title: '车牌号',
+      dataIndex: 'numberPlate',
+      key: 'numberPlate',
+      width: 90,
+      fixed: 'left',
+      render: (text, { numberPlate, brand }) => {
+        return <>
+          <span onClick={() => jumpPoint(numberPlate)}>{numberPlate} {brand}</span>
+        </>
+      }
+    },
+  ];
+
   return <div className='dashboard-page'>
     <Card className='dashboard-page_info'>
-      <h4>注册设备数量: {data?.length}</h4>
+      <h4>注册设备数量: {dataTable?.totalElements} | 上线设备数量: {data?.length}</h4>
+    </Card>
+    <Card className='dashboard-page_table'>
+      <Form
+        layout={'inline'}
+        className='info-list_filter'
+        onFinish={onFinish}
+      >
+        <Form.Item label="" name="numberPlate">
+          <Input placeholder="搜索车牌号" allowClear />
+        </Form.Item>
+        <Form.Item>
+          <Button htmlType="submit" type="primary">搜索</Button>
+        </Form.Item>
+      </Form>
+      <Table dataSource={dataTable?.data} columns={columns} pagination={
+        {
+          showTotal: total => `总数 ${total} 条`,
+          current: dataTable?.number,
+          total: dataTable?.totalElements,
+          onChange: (NextPage) => {
+            setQeury({ ...qeury, pageNumber: NextPage })
+          }
+        }
+      } />
     </Card>
     {!!data?.length && <div id="dashboardContainer" className="map" style={{ height: '100%' }} />}
   </div>;

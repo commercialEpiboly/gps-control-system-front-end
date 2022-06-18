@@ -53,7 +53,7 @@ export default () => {
     }).then((response) => response.json()).then((json) => {
       if (json) {
         const [usersInfo] = json?.data?.data
-        window.localStorage.setItem('user', JSON.stringify(usersInfo))
+        window.localStorage.setItem('userInfo', JSON.stringify(usersInfo))
         navigate('/')
         window.location.reload();
       }

@@ -7,10 +7,15 @@ import {
 
 export default () => {
   const navigate = useNavigate()
+  const { area, username } = JSON.parse(localStorage.getItem('userInfo'))
   const onFinish = (data) => {
     fetch(`${window.urlApi}/device/saveDeviceBase`, {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: JSON.stringify({
+        ...data,
+        area: area === '*' ? data.area : area,
+        createUser: username,
+      }),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': window.sessionStorage.getItem('token')
@@ -133,6 +138,16 @@ export default () => {
       placeholder: '备注',
     }
   ]
+
+  if (area === '*') {
+    itemList.push({
+      name: 'area',
+      placeholder: '区域',
+      message: '请输入区域',
+      label: '区域',
+      required: true
+    })
+  }
 
   return (
     <div className="create-page">

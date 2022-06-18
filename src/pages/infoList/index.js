@@ -21,7 +21,7 @@ const { RangePicker } = DatePicker;
 // 备注 *
 export default () => {
   const navigate = useNavigate();
-  const { area } = JSON.parse(localStorage.getItem('user'))
+  const { area } = JSON.parse(localStorage.getItem('userInfo'))
   const [qeury, setQeury] = useState({
     engineNumber: "",
     frameNumber: "",
@@ -71,9 +71,9 @@ export default () => {
     })
   }
 
-  useEffect(() => {
-    qeuryHandle()
-  }, [])
+  // useEffect(() => {
+  //   qeuryHandle()
+  // }, [])
 
   useEffect(() => {
     qeuryHandle()
@@ -93,6 +93,13 @@ export default () => {
       title: '车牌号',
       dataIndex: 'numberPlate',
       key: 'numberPlate',
+      width: 90,
+      fixed: 'left',
+    },
+    {
+      title: '区域',
+      dataIndex: 'area',
+      key: 'area',
       width: 90,
       fixed: 'left',
     },
@@ -137,6 +144,12 @@ export default () => {
       title: '品牌名称',
       dataIndex: 'brand',
       key: 'brand',
+      width: 150,
+    },
+    {
+      title: '创建人',
+      dataIndex: 'createUser',
+      key: 'createUser',
       width: 150,
     },
     {
@@ -207,9 +220,11 @@ export default () => {
         <Form.Item label="车牌号" name="numberPlate">
           <Input placeholder="车牌号" allowClear />
         </Form.Item>
-        <Form.Item label="车牌号" name="numberPlate">
-          <Input placeholder="车牌号" allowClear />
-        </Form.Item>
+        {
+          area === '*' && <Form.Item label="区域" name="area">
+            <Input placeholder="区域" allowClear />
+          </Form.Item>
+        }
         <Form.Item label="日期范围" name="dateRange">
           <RangePicker allowClear />
         </Form.Item>

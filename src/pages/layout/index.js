@@ -33,7 +33,7 @@ const { Header, Content, Sider } = Layout;
 export default () => {
   const [collapsed, setCollapsed] = useState(false)
   const navigate = useNavigate();
-  const user = JSON.parse(window.localStorage.getItem('user'))
+  const user = JSON.parse(window.localStorage.getItem('userInfo'))
 
   let addressableMenu;
 
@@ -58,7 +58,7 @@ export default () => {
 
   // 退出登录
   const loginOut = () => {
-    localStorage.setItem('user', '')
+    localStorage.setItem('userInfo', '')
     sessionStorage.setItem('token', '')
     navigate('/login')
   }

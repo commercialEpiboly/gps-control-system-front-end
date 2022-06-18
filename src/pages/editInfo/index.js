@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
-import { Form, Input, Button, Alert,message,InputNumber } from 'antd';
+import { Form, Input, Button, Alert, message, InputNumber } from 'antd';
 import {
   useNavigate,
 } from "react-router-dom";
 
 export default () => {
+  const { area, username } = JSON.parse(localStorage.getItem('userInfo'))
   const [form] = Form.useForm();
   const defaultData = JSON.parse(window.localStorage.getItem('data'))
   const navigate = useNavigate()
@@ -18,10 +19,12 @@ export default () => {
   }, [])
 
   const onFinish = (data) => {
-    
+
     const newData = {
-        ...defaultData,
-      ...data
+      ...defaultData,
+      ...data,
+      area: area === '*' ? data.area : area,
+      createUser: username,
     }
 
     fetch(`${window.urlApi}/device/saveDeviceBase`, {
@@ -40,7 +43,7 @@ export default () => {
 
   useEffect(() => {
     form.setFieldsValue(defaultData)
-  },[])
+  }, [])
   const itemList = [
     {
       name: 'deviceId',
@@ -52,7 +55,7 @@ export default () => {
     },
     {
       name: 'name',
-      placeholder:'请输入姓名',
+      placeholder: '请输入姓名',
       message: '请输入姓名',
       label: '请输入姓名',
       required: true,
@@ -73,7 +76,7 @@ export default () => {
       required: true,
       rules: [
         {
-          pattern: /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/, 
+          pattern: /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/,
           message: '请输入正确身份证'
         }
       ],
@@ -144,6 +147,16 @@ export default () => {
     }
   ]
 
+  if (area === '*') {
+    itemList.push({
+      name: 'area',
+      placeholder: '区域',
+      message: '请输入区域',
+      label: '区域',
+      required: true
+    })
+  }
+
   return (
     <div className="edit-page">
       <Alert message="设备识别码创建后则不可改变" type="success" />
@@ -158,14 +171,14 @@ export default () => {
         autoComplete="off"
       >
         {
-          itemList.map(({ rules, message, required, name, placeholder, disabled,label, type }, index) => {
+          itemList.map(({ rules, message, required, name, placeholder, disabled, label, type }, index) => {
             return <Form.Item
               label={label}
               name={name}
               key={index}
-              rules={ rules ? [...rules,{ required, message }] :[{ required, message }]}
+              rules={rules ? [...rules, { required, message }] : [{ required, message }]}
             >
-              {type === 'number'? <InputNumber  size="large" placeholder={placeholder}/> :<Input  size="large" placeholder={placeholder} disabled={disabled} />}
+              {type === 'number' ? <InputNumber size="large" placeholder={placeholder} /> : <Input size="large" placeholder={placeholder} disabled={disabled} />}
             </Form.Item>
           })
         }

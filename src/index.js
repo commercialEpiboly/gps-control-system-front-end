@@ -30,7 +30,7 @@ const NotFound404 = () => {
 }
 
 const Index = () => {
-  const user = localStorage.getItem('user')
+  const user = localStorage.getItem('userInfo')
   return <BrowserRouter>
     <Routes>
       {
