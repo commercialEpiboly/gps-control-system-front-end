@@ -1,0 +1,14 @@
+.dataChart_head>div>div {
+    padding: 8px;
+}
+
+.dataChart_content>div>div {
+    padding: 8px;
+}
+
+.dataChart_head_text {
+    font-size: 20px;
+}
+.dataChart_head_text span {
+    margin-right: 8px;
+}

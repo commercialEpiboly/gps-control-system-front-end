@@ -189,7 +189,7 @@ export default () => {
   ];
   return <div className='warn-page'>
     <Card className='warn-page_info'>
-      <h4>1小时内报警车辆: {data?.length}</h4>
+      <h4>本周异常车辆: {data?.length}</h4>
     </Card>
     {!!data?.length && <DotMap {...config} />}
     <Card className='warn-page_list'>

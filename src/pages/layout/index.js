@@ -14,13 +14,12 @@ import Dashboard from '../dashboard'
 import Warn from '../warn'
 import StaffList from '../staffList'
 import StaffDetail from '../staffDetail'
+import DataChart from '../DataChart'
 import _ from 'lodash'
 import { Menu, Button, Layout, message } from 'antd';
 import {
   PieChartOutlined,
   DesktopOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
   ContainerOutlined,
   AlertOutlined,
   UserAddOutlined
@@ -96,8 +95,15 @@ export default () => {
       component: <Route path="/warn" element={<Warn />} />,
       defaultRoute: <Warn />
     },
+    '数据图表': {
+      menuCom: <Menu.Item key="5" icon={<AlertOutlined />}>
+        <Link to="/dataChart" >数据图表</Link>
+      </Menu.Item>,
+      component: <Route path="/dataChart" element={<DataChart />} />,
+      defaultRoute: <Warn />
+    },
     '账号管理': {
-      menuCom: <Menu.Item key="" icon={<UserAddOutlined />}>
+      menuCom: <Menu.Item key="6" icon={<UserAddOutlined />}>
         <Link to="/staffList" >账号管理</Link>
       </Menu.Item>,
       component: <>
