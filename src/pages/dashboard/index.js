@@ -1,12 +1,14 @@
 import './index.css';
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import { Card, message, Form, Table, Input, Button } from 'antd'
+import { Card, message, Form, Table, Input, Button, Dropdown, Menu, Space } from 'antd'
 import {
   useNavigate
 } from "react-router-dom";
 import * as ChinaCoordTrans from 'chinacoordtrans'
 import _ from 'lodash'
+import {
+  AppstoreOutlined
+} from '@ant-design/icons';
 
 function insert(str, index, string) {
   if (index > 0)
@@ -122,13 +124,13 @@ export default () => {
 
         const opts = {
           width: 300,
-          height: 200,
+          height: 180,
           title: `【${numberPlate}】${brand}`, // 信息窗口标题
-          message: "这里是故宫"
+          message: ""
         }
 
         const infoWindow = new window.BMapGL.InfoWindow('', opts);
-        marker.addEventListener("click", function () {
+        marker.addEventListener("click", () => {
           if (!phoneNumber) return
 
           map.openInfoWindow(infoWindow, markerPoint); //开启信息窗口
@@ -168,10 +170,6 @@ export default () => {
               <div class='dashboardInfoLine'></div>
               <p>${rs.address}${rs?.surroundingPois[0]?.title || ''}</p>
               <div class='dashboardInfoLine'></div>
-              <div class='buttons'>
-                <span class="button" data-id="">轨迹回放</span>
-                <span class="button" data-id="">实时定位</span>
-              </div>
               `)
             })
           })
@@ -217,6 +215,15 @@ export default () => {
       map.centerAndZoom(markerPoint, 19);
     }
   }
+
+
+  const jumpPage = (url, data) => {
+    if (data) {
+      window.localStorage.setItem('data', '')
+      window.localStorage.setItem('data', JSON.stringify(data))
+    }
+    navigate(url)
+  }
   const columns = [
     {
       title: '车牌号',
@@ -226,7 +233,26 @@ export default () => {
       fixed: 'left',
       render: (text, { numberPlate, brand }) => {
         return <>
-          <span onClick={() => jumpPoint(numberPlate)}>{numberPlate} {brand}</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => jumpPoint(numberPlate)}>{numberPlate} {brand}</span>
+        </>
+      }
+    },
+    {
+      title: '菜单选项',
+      dataIndex: 'brand',
+      key: 'brand',
+      width: 20,
+      fixed: 'left',
+      render: (text, item) => {
+        return <>
+          <Dropdown trigger={'click'} overlay={<Menu>
+            <Menu.Item onClick={()=> jumpPage('/detailInfo', item)}>轨迹回放</Menu.Item>
+            <Menu.Item onClick={()=> jumpPage('/realTimeLocation', item)}>实时位置</Menu.Item>
+          </Menu>}>
+            <Space>
+              <Button>菜单</Button>
+            </Space>
+          </Dropdown>
         </>
       }
     },

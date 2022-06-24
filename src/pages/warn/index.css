@@ -10,6 +10,7 @@
   bottom: 10px;
   width: calc(100% - 20px);
   left: 10px;
+  top: 65px;
 }
 .warn-page_info {
   position: absolute;

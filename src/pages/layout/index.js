@@ -9,6 +9,7 @@ import {
 import CreateInfo from '../createInfo'
 import Detail from '../detail'
 import InfoList from '../infoList'
+import RealTimeLocation from '../realTimeLocation'
 import EditInfo from '../editInfo'
 import Dashboard from '../dashboard'
 import Warn from '../warn'
@@ -85,6 +86,7 @@ export default () => {
         <Route path="/editInfo" element={<EditInfo />} />
         <Route path="/detailInfo" element={<Detail />} />
         <Route path="/list" element={<InfoList />} />
+        <Route path="/realTimeLocation" element={<RealTimeLocation />} />
       </>,
       defaultRoute: <InfoList />
     },

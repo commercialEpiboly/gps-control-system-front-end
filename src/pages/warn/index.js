@@ -20,70 +20,18 @@ export default () => {
   const [data, setData] = useState([]);
   const [qData, setQdata] = useState({})
   const navigate = useNavigate()
-
-  useEffect(() => {
-    asyncFetch();
-  }, []);
-
-  const asyncFetch = () => {
-    fetch(`${window.urlApi}/device/getAllDeviceGpsOneData`,{
-      headers: {
-        'Authorization': window.sessionStorage.getItem('token')
-      }
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        if (!json?.data) {
-          return
-        }
-        let lineArr = json?.data?.map(({ latitude, longitude, deviceId }) => {
-          const long = Number(insert(longitude, 3, '.'))
-          const lat = Number(insert(latitude, 2, '.'))
-          const COORXY = ChinaCoordTrans.wgs84togcj02(long, lat);
-          return {
-            deviceId,
-            coordinates: [COORXY.X, COORXY.Y]
-          }
-        })
-        setData(lineArr)
-      })
-      .catch((error) => {
-        console.log('fetch data failed', error);
-      });
-  };
-
-  const config = {
-    map: {
-      type: 'mapbox',
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: data[0]?.coordinates,
-      zoom: 15,
-      pitch: 0,
-      token: 'pk.eyJ1IjoibGVubGVlIiwiYSI6ImNra3A5bjFyMTAwc20ydnF3dmJndWRubmwifQ.2hSdxy-hOFEBeK_hgsoKCQ'
-    },
-    source: {
-      data: data,
-      parser: { type: 'json', coordinates: 'coordinates' },
-    },
-    animate: true,
-    state: {
-      active: true,
-    },
-    size: 50,
-    color: 'red',
-    tooltip: {
-      items: ['deviceId'],
-    },
-  };
+  const { area } = JSON.parse(localStorage.getItem('userInfo'))
 
   const [qeury, setQeury] = useState({
     engineNumber: "",
     frameNumber: "",
     idCard: "",
     numberPlate: "",
+    status: '异常',
     pageNumber: 1,
-    pageSize: 8,
-    phoneNumber: ""
+    pageSize: 100,
+    phoneNumber: "",
+    area
   })
 
   const qeuryHandle = () => {
@@ -95,29 +43,15 @@ export default () => {
         'Content-Type': 'application/json',
         'Authorization': window.sessionStorage.getItem('token')
       },
-    }).then((response) => response.json()).then(({ qData }) => {
-      setQdata(qData)
-    })
-  }
-
-  const onFinish = (filterData) => {
-    Object.keys(filterData).map((key) => {
-      filterData[key] = filterData[key] ? filterData[key] : ''
-    })
-
-    setQeury({
-      ...qeury,
-      ...filterData
+    }).then((response) => response.json()).then(({ data }) => {
+      debugger
+      setQdata(data)
     })
   }
 
   useEffect(() => {
     qeuryHandle()
   }, [])
-
-  useEffect(() => {
-    qeuryHandle()
-  }, [qeury])
 
 
   const jumpPage = (url, data) => {
@@ -181,7 +115,6 @@ export default () => {
       fixed: 'right',
       render: (text, item) => {
         return <>
-          <Button type="link" onClick={() => jumpPage('/editInfo', item)}> 编辑 </Button>
           <Button type="link" onClick={() => jumpPage('/detailInfo', item)}> 轨迹 </Button>
         </>
       }
@@ -189,27 +122,10 @@ export default () => {
   ];
   return <div className='warn-page'>
     <Card className='warn-page_info'>
-      <h4>本周异常车辆: {data?.length}</h4>
+      <h4>异常车辆: {qData?.totalElements || 0}</h4>
     </Card>
-    {!!data?.length && <DotMap {...config} />}
     <Card className='warn-page_list'>
-      <Table scroll={{ x: 1500, y: 300 }} dataSource={[{
-        "id": 1,
-        "deviceId": "1440796010782",
-        "idCard": "513821199401239038",
-        "phoneNumber": "18181029381",
-        "frameNumber": "16516565",
-        "numberPlate": "451561",
-        "engineNumber": "fsdfs",
-        "brand": "雅迪",
-        "color": "黑色",
-        "dealerAddress": "成都市高新区",
-        "status": "正常",
-        "remark": "优秀备注",
-        "createDateTime": "2022-03-17 18:06:08",
-        "updateTime": "2022-03-24 22:17:10",
-        "usePeriod": "20"
-      }]} columns={columns} pagination={
+      <Table scroll={{ x: 1500, y: 300 }} dataSource={qData.data} columns={columns} pagination={
         {
           current: qData?.number,
           total: qData?.totalElements,

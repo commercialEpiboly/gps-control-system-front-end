@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
+import json2xlsx from 'json2xlsx-export';
 import {
   useNavigate,
 } from "react-router-dom";
 import { Table, Form, Input, Button, DatePicker, InputNumber } from 'antd';
 import moment from 'moment'
-
+import _ from 'lodash'
 const { RangePicker } = DatePicker;
 // 创建时间 *
 // 使用年限 
@@ -66,14 +67,11 @@ export default () => {
     setQeury({
       ...qeury,
       ...filterData,
+      area: filterData?.area ? filterData.area : area,
       startTime,
       endTime
     })
   }
-
-  // useEffect(() => {
-  //   qeuryHandle()
-  // }, [])
 
   useEffect(() => {
     qeuryHandle()
@@ -190,6 +188,25 @@ export default () => {
       }
     },
   ];
+
+  const exportXlsx = () => {
+    const config = {
+      filename: '导出的文档',
+      sheets: [
+        {
+          name: 'Sheet1',
+          data: data?.data.map((item) => {
+            return _.map(item, (v) => {
+              return {
+                value: v,
+                type: 'string'
+              }
+            })
+          })
+        }]
+    }
+    json2xlsx(config);
+  }
   // 身份证 搜索
   // 手机号 搜索
   // 车架号 搜索
@@ -220,6 +237,12 @@ export default () => {
         <Form.Item label="车牌号" name="numberPlate">
           <Input placeholder="车牌号" allowClear />
         </Form.Item>
+        <Form.Item label="创建人" name="createUser">
+          <Input placeholder="创建人" allowClear />
+        </Form.Item>
+        <Form.Item label="状态" name="status">
+          <Input placeholder="状态" allowClear />
+        </Form.Item>
         {
           area === '*' && <Form.Item label="区域" name="area">
             <Input placeholder="区域" allowClear />
@@ -232,14 +255,18 @@ export default () => {
           <Button htmlType="submit" type="primary">搜索</Button>
         </Form.Item>
       </Form>
+      <Button htmlType="submit" onClick={exportXlsx} type="primary">导出成【.xlsx】</Button>
+
       <Table scroll={{ x: 1500 }} dataSource={data?.data} columns={columns} pagination={
         {
           showTotal: total => `总数 ${total} 条`,
           current: data?.number,
           total: data?.totalElements,
-          onChange: (NextPage) => {
-            setQeury({ ...qeury, pageNumber: NextPage })
-          }
+          onChange: (NextPage, pageSize) => {
+            setQeury({ ...qeury, pageNumber: NextPage, pageSize })
+          },
+          showSizeChanger: true,
+          pageSizeOptions: [8, 10, 20, 50, 70, 100, 200]
         }
       } />
     </div>
