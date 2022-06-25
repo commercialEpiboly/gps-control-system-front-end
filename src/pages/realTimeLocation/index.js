@@ -128,7 +128,7 @@ export default class MapComponent extends Component {
                 const currentPoint = new window.BMapGL.Point(lineArr[0][0], lineArr[0][1]);
                 marker.setPosition(currentPoint)
             })
-        }, 10000);
+        }, 50000);
     }
 
     getGPS() {

@@ -72,7 +72,7 @@ export default () => {
         let weekstart = moment().weekday(1).format('YYYY-MM-DD') //本周一
         let weekEnd = moment().weekday(7).format('YYYY-MM-DD') //本周日
 
-        fetch(`${window.urlApi}/device/getStatisticsInfo`, {
+        fetch(`${window.urlApi}/device/getStatisticsInfo?area=${area}`, {
             method: 'POST',
             mode: 'cors',
             body: JSON.stringify({
@@ -108,7 +108,7 @@ export default () => {
         let monthStart = moment().startOf('month').format('YYYY-MM-DD') //月开始
         let monthEnd = moment().endOf('month').format('YYYY-MM-DD') //月结束
 
-        fetch(`${window.urlApi}/device/getStatisticsInfo`, {
+        fetch(`${window.urlApi}/device/getStatisticsInfo?area=${area}`, {
             method: 'POST',
             mode: 'cors',
             body: JSON.stringify({
@@ -134,7 +134,7 @@ export default () => {
                 setMonthData(ddd)
 
                 // 堆叠
-                fetch(`${window.urlApi}/device/getStatisticsInfo`, {
+                fetch(`${window.urlApi}/device/getStatisticsInfo?area=${area}`, {
                     method: 'POST',
                     mode: 'cors',
                     body: JSON.stringify({
