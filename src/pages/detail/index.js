@@ -37,6 +37,10 @@ export default () => {
       name: 'numberPlate',
     },
     {
+      name: 'carNumber',
+      name: '防盗备案牌'
+    },
+    {
       label: '发动机号',
       name: 'engineNumber',
     }, {

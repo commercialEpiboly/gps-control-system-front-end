@@ -30,7 +30,8 @@ class MapComponent extends Component {
       startAnimation: false,
       pause: false,
       startTime: '',
-      endTime: ''
+      endTime: '',
+      lastPoint: ''
     }
 
     this.map = {};
@@ -123,6 +124,10 @@ class MapComponent extends Component {
         message.warn('此时间段没有轨迹数据，请选择3天内的时间');
         return
       }
+      
+      this.setState({
+        lastPoint: lineArr[0]
+      })
 
       this.initMap(lineArr, validData.reverse())
     })
@@ -191,6 +196,9 @@ class MapComponent extends Component {
             </Radio.Group>
             <RangePicker allowClear showTime onChange={this.changeRange.bind(this)} />
             <Button onClick={this.getGPS.bind(this)}>获取轨迹</Button>
+            {
+              this.state?.lastPoint && <a href={`http://api.map.baidu.com/geocoder?location=${this.state?.lastPoint[1]},${this.state?.lastPoint[0]}&coord_type=gcj02&output=html&src=webapp.baidu.openAPIdemo`}>开始导航</a>
+            } 
           </Card>
         </div>
       </div>

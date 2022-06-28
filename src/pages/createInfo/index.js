@@ -92,6 +92,13 @@ export default () => {
       required: true
     },
     {
+      name: 'carNumber',
+      placeholder: '请输入防盗备案牌',
+      message: '请输入防盗备案牌',
+      label: '防盗备案牌',
+      required: true
+    },
+    {
       name: 'numberPlate',
       placeholder: '请输入车牌号',
       message: '请输入车牌号',

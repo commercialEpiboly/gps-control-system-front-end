@@ -60,15 +60,19 @@ export default () => {
         navigate(url)
     }
 
-    const delConfirm = () => {
-        fetch(`${window.urlApi}/user/deleteUser?${new URLSearchParams(qeury)}`, {
+    const delConfirm = (id) => {
+        fetch(`${window.urlApi}/user/deleteUser`, {
+            method: 'POST',
+            body: JSON.stringify({id}),
             headers: {
-                'Authorization': window.sessionStorage.getItem('token')
+                'Authorization': window.sessionStorage.getItem('token'),
+                'Content-Type': 'application/json'
             },
         }).then((response) => response.json()).then(({ data }) => {
             qeuryHandle(data)
         })
-    }
+    }   
+
 
     const columns = [
         {
@@ -96,12 +100,6 @@ export default () => {
             width: 150,
             key: 'phoneNumber',
         },
-        // {
-        //     title: '角色',
-        //     dataIndex: 'role',
-        //     width: 150,
-        //     key: 'role',
-        // },
         {
             title: '编辑',
             dataIndex: 'status',
@@ -113,12 +111,12 @@ export default () => {
                     <Button type="link" onClick={() => jumpPage('/staffDetail', item)}> 编辑 </Button>
                     <Popconfirm
                         title="是否确认删除该账户?"
-                        onConfirm={delConfirm}
+                        onConfirm={()=> delConfirm(item?.id)}
                         onCancel={() => { }}
                         okText="是"
                         cancelText="否"
                     >
-                        <Button type="link" onClick={() => jumpPage('/editInfo', item)}> 删除 </Button>
+                        <Button type="link"> 删除 </Button>
                     </Popconfirm>
 
                 </>

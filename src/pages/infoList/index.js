@@ -95,6 +95,13 @@ export default () => {
       fixed: 'left',
     },
     {
+      title: '防盗备案牌',
+      dataIndex: 'carNumber',
+      key: 'carNumber',
+      width: 90,
+      fixed: 'left',
+    },
+    {
       title: '区域',
       dataIndex: 'area',
       key: 'area',
@@ -236,6 +243,9 @@ export default () => {
         </Form.Item>
         <Form.Item label="车牌号" name="numberPlate">
           <Input placeholder="车牌号" allowClear />
+        </Form.Item>
+        <Form.Item label="防盗备案牌" name="carNumber">
+          <Input placeholder="防盗备案牌" allowClear />
         </Form.Item>
         <Form.Item label="创建人" name="createUser">
           <Input placeholder="创建人" allowClear />

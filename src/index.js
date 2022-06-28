@@ -15,9 +15,9 @@ import {
 // test
 // window.urlApi = 'http://119.91.226.187:19009'
 // pro
-// window.urlApi = 'https://www.jusenkaiyue.cn/api'
+window.urlApi = 'https://www.jusenkaiyue.cn/api'
 // dev
-window.urlApi = 'http://localhost:19009'
+// window.urlApi = 'http://localhost:19009'
 
 const NotFound404 = () => {
   return <Spin tip="跳转中....">

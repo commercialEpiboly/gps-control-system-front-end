@@ -69,6 +69,13 @@ export default () => {
       required: true
     },
     {
+      name: 'carNumber',
+      placeholder: '请输入防盗备案牌',
+      message: '请输入防盗备案牌',
+      label: '防盗备案牌',
+      required: true
+    },
+    {
       name: 'idCard',
       placeholder: '请输入身份证',
       message: '请输入身份证',
