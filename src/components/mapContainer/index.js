@@ -58,7 +58,7 @@ class MapComponent extends Component {
     });
 
     MapContainer.addOverlay(MapContainerPath);
-
+    
     this.lushu = new window.BMapGLLib.LuShu(MapContainer, MapContainerPath.getPath(), {
       defaultContent: " ",
       geodesic: false,
@@ -76,8 +76,6 @@ class MapComponent extends Component {
       speed: 1,
       enableRotation: false
     });
-
-    this.lushu.showInfoWindow()
   }
 
   getGPS() {
@@ -106,6 +104,8 @@ class MapComponent extends Component {
         })
       }).reverse()
 
+      lineArr.splice(lineArr.length - 2)
+
       lineArr = lineArr.map((v) => {
         const { id, latitude, longitude } = v
         const long = Number(insert(longitude, 3, '.'))
@@ -124,7 +124,7 @@ class MapComponent extends Component {
         message.warn('此时间段没有轨迹数据，请选择3天内的时间');
         return
       }
-      
+
       this.setState({
         lastPoint: lineArr[0]
       })
@@ -166,6 +166,7 @@ class MapComponent extends Component {
               {
                 this.state.startAnimation ?
                   <Radio.Button onClick={() => {
+                    this.lushu.hideInfoWindow()
                     this.lushu.start()
                   }}>重新播放</Radio.Button> :
                   <Radio.Button onClick={() => {
@@ -173,7 +174,7 @@ class MapComponent extends Component {
                       startAnimation: true
                     })
                     this.lushu.start((info) => {
-                      console.log()
+                      
                     })
                   }}>开始播放</Radio.Button>
               }
@@ -198,7 +199,7 @@ class MapComponent extends Component {
             <Button onClick={this.getGPS.bind(this)}>获取轨迹</Button>
             {
               this.state?.lastPoint && <a href={`http://api.map.baidu.com/geocoder?location=${this.state?.lastPoint[1]},${this.state?.lastPoint[0]}&coord_type=gcj02&output=html&src=webapp.baidu.openAPIdemo`}>开始导航</a>
-            } 
+            }
           </Card>
         </div>
       </div>

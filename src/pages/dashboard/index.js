@@ -81,17 +81,16 @@ export default () => {
   const geoc = new window.BMapGL.Geocoder();
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+    map = new window.BMapGL.Map("dashboardContainer");
+    const point = new window.BMapGL.Point(103.85784595108075, 30.04325952077016);
+    map.centerAndZoom(point, 13);
+    map.enableScrollWheelZoom();
+    const scaleCtrl = new window.BMapGL.ScaleControl();  // 添加比例尺控件
+    map.addControl(scaleCtrl);
+    const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
+    map.addControl(zoomCtrl);
     if (!!data.length) {
-      window.scrollTo(0, 0)
-      map = new window.BMapGL.Map("dashboardContainer");
-      const point = new window.BMapGL.Point(103.85784595108075, 30.04325952077016);
-      map.centerAndZoom(point, 14);
-      map.enableScrollWheelZoom();
-      const scaleCtrl = new window.BMapGL.ScaleControl();  // 添加比例尺控件
-      map.addControl(scaleCtrl);
-      const zoomCtrl = new window.BMapGL.ZoomControl();  // 添加缩放控件
-      map.addControl(zoomCtrl);
-
       // 创建小车图标
       data.forEach(({ deviceId, coordinates, brand, numberPlate, phoneNumber }) => {
         // 创建定位点
@@ -260,7 +259,7 @@ export default () => {
 
   return <div className='dashboard-page'>
     <Card className='dashboard-page_info'>
-      <h4>注册设备数量: {dataTable?.totalElements} | 上线设备数量: {data?.length}</h4>
+      <h4>注册设备数量: {dataTable?.totalElements || 0} | 上线设备数量: {data?.length || 0}</h4>
     </Card>
     <Card className='dashboard-page_table'>
       <Form
@@ -286,6 +285,6 @@ export default () => {
         }
       } />
     </Card>
-    {!!data?.length && <div id="dashboardContainer" className="map" style={{ height: '100%' }} />}
+    <div id="dashboardContainer" className="map" style={{ height: '100%' }} />
   </div>;
 };

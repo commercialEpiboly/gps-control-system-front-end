@@ -108,6 +108,12 @@ export default () => {
       width: 150,
     },
     {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
+      width: 150,
+    },
+    {
       title: '编辑',
       dataIndex: 'status',
       key: 'status',
