@@ -163,7 +163,7 @@ export default () => {
               infoWindow.setContent(`
               <p>颜色：${color} 发动机/电机号：${engineNumber} 车架号：${frameNumber}</p>
               <p>身份证：${idCard}</p>
-              <p>经销商地址：${dealerAddress}</p>
+              <p>区域地址：${dealerAddress}</p>
               <p>状态：${status} 使用年限：${usePeriod}/年</p>
               <p>创建时间：${createDateTime}</p>
               <div class='dashboardInfoLine'></div>

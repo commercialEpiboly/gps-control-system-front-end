@@ -17,9 +17,9 @@ const { RangePicker } = DatePicker;
 // 发动机号 搜索
 // 牌子
 // 颜色
-// 经销商地址
+// 区域地址
 // 状态  离线/上线 *
-// 备注 *
+// 身份证信息 *
 export default () => {
   const navigate = useNavigate();
   const { area } = JSON.parse(localStorage.getItem('userInfo'))
@@ -140,7 +140,7 @@ export default () => {
       width: 150,
     },
     {
-      title: '发动机号',
+      title: '车辆类型',
       dataIndex: 'engineNumber',
       key: 'engineNumber',
       width: 150,
@@ -180,6 +180,11 @@ export default () => {
       dataIndex: 'updateTime',
       key: 'createTime',
       width: 150,
+    },
+    {
+      name: 'remark',
+      label: '身份证信息',
+      placeholder: '身份证信息',
     },
     {
       title: '编辑',

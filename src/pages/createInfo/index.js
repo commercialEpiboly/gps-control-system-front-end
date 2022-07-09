@@ -107,9 +107,9 @@ export default () => {
     },
     {
       name: 'engineNumber',
-      placeholder: '请输入发动机号/电动机号',
-      message: '请输入发动机号/电动机号',
-      label: '发动机号/电动机号',
+      placeholder: '请输入车辆类型',
+      message: '请输入车辆类型',
+      label: '车辆类型',
       required: true
     },
     {
@@ -128,9 +128,9 @@ export default () => {
     },
     {
       name: 'dealerAddress',
-      placeholder: '请输入经销商地址',
-      message: '请输入经销商地址',
-      label: '经销商地址',
+      placeholder: '请输入区域地址',
+      message: '请输入区域地址',
+      label: '区域地址',
       required: true
     },
     {
@@ -141,8 +141,8 @@ export default () => {
     },
     {
       name: 'remark',
-      label: '备注',
-      placeholder: '备注',
+      label: '身份证信息',
+      placeholder: '身份证信息',
     }
   ]
 

@@ -61,13 +61,13 @@ export default class MapComponent extends Component {
               label: '颜色',
               name: 'color',
             }, {
-              label: '经销商地址',
+              label: '区域地址',
               name: 'dealerAddress',
             }, {
               label: '状态',
               name: 'status',
             }, {
-              label: '备注',
+              label: '身份证信息',
               name: 'remark',
             },
           ]
