@@ -35,7 +35,7 @@ export default () => {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [dataTable, setDataTable] = useState({});
-
+  const [datatotal, setDatatotal] = useState(0);
 
   useEffect(() => {
     asyncFetch();
@@ -56,7 +56,8 @@ export default () => {
         if (!json?.data) {
           return
         }
-        lineArr = json?.data?.map(({ latitude, longitude, deviceId, brand, numberPlate, phoneNumber }) => {
+        setDatatotal(json?.data?.total)
+        lineArr = json?.data?.gps?.map(({ latitude, longitude, deviceId, brand, numberPlate, phoneNumber }) => {
           const long = Number(insert(longitude, 3, '.'))
           const lat = Number(insert(latitude, 2, '.'))
           let COORXY = ChinaCoordTrans.wgs84togcj02(long, lat);
@@ -259,7 +260,7 @@ export default () => {
 
   return <div className='dashboard-page'>
     <Card className='dashboard-page_info'>
-      <h4>注册设备数量: {dataTable?.totalElements || 0} | 上线设备数量: {data?.length || 0}</h4>
+      <h4>注册设备数量: {dataTable?.totalElements || 0} | 上线设备数量: {datatotal || 0}</h4>
     </Card>
     <Card className='dashboard-page_table'>
       <Form

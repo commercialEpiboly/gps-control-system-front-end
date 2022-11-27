@@ -7,8 +7,10 @@ import {
 
 export default () => {
   const navigate = useNavigate()
+  const [submiting, setSubmiting] = useState(false)
   const { area, username } = JSON.parse(localStorage.getItem('userInfo'))
   const onFinish = (data) => {
+    setSubmiting(true)
     fetch(`${window.urlApi}/device/saveDeviceBase`, {
       method: 'POST',
       body: JSON.stringify({
@@ -21,10 +23,17 @@ export default () => {
         'Authorization': window.sessionStorage.getItem('token')
       },
     })
-      .then(response => {
+    .then((response) => response.json())
+    .then((response) => {
         console.log(response)
+        if(!response.data) {
+          message.error('创建失败设备已存在！');
+          return
+        }
         message.success('创建成功！');
         navigate('/list')
+      }).finally(()=>{
+        setSubmiting(false)
       })
   }
 
@@ -183,7 +192,7 @@ export default () => {
         }
 
         <Form.Item >
-          <Button className='btn' type="primary" htmlType="submit">
+          <Button loading={submiting} className='btn' type="primary" htmlType="submit">
             确认创建
           </Button>
         </Form.Item>

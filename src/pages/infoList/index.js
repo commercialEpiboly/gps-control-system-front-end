@@ -29,7 +29,7 @@ export default () => {
     idCard: "",
     numberPlate: "",
     pageNumber: 1,
-    pageSize: 8,
+    pageSize: 20,
     phoneNumber: "",
     area
   })
@@ -277,11 +277,12 @@ export default () => {
           showTotal: total => `总数 ${total} 条`,
           current: data?.number,
           total: data?.totalElements,
+          pageSize: 20,
           onChange: (NextPage, pageSize) => {
             setQeury({ ...qeury, pageNumber: NextPage, pageSize })
           },
           showSizeChanger: true,
-          pageSizeOptions: [8, 10, 20, 50, 70, 100, 200]
+          pageSizeOptions: [20, 50, 70, 100, 200,500]
         }
       } />
     </div>
